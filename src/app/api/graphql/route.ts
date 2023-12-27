@@ -11,32 +11,6 @@ import {
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import { NextResponse } from "next/server";
 import { executeQuery, getPool } from "@/services/database";
-import { get } from "http";
-import { exec } from "child_process";
-
-const Group = new GraphQLObjectType({
-	name: "Group",
-	fields: {
-		name: {
-			type: GraphQLString,
-			resolve() {
-				return "group name";
-			},
-		},
-		limit: {
-			type: GraphQLFloat,
-			resolve() {
-				return 50.5;
-			},
-		},
-		members: {
-			type: new GraphQLList(GraphQLString),
-			resolve() {
-				return [];
-			},
-		},
-	},
-});
 
 const Gift = new GraphQLObjectType({
 	name: "Gift",
@@ -53,6 +27,55 @@ const Gift = new GraphQLObjectType({
 	},
 });
 
+const User = new GraphQLObjectType({
+	name: "User",
+	fields: {
+		slug: {
+			type: GraphQLString,
+		},
+		firstName: {
+			resolve(src) {
+				return src.first_name;
+			},
+			type: GraphQLString,
+		},
+		lastName: {
+			resolve(src) {
+				return src.last_name;
+			},
+			type: GraphQLString,
+		},
+		email: {
+			type: GraphQLString,
+		},
+	},
+});
+
+const Group = new GraphQLObjectType({
+	name: "Group",
+	fields: {
+		name: {
+			type: GraphQLString,
+		},
+		description: {
+			type: GraphQLString,
+		},
+		limit: {
+			type: GraphQLFloat,
+		},
+		members: {
+			type: new GraphQLList(User),
+			resolve(src, _, ctx) {
+				const sql =
+					"SELECT * FROM public.users u join public.user_groups ug on u.user_id = ug.user_id where ug.group_id = $1";
+				const values = [src.group_id];
+
+				return executeQuery(sql, values);
+			},
+		},
+	},
+});
+
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
 		name: "RootQueryType",
@@ -65,8 +88,15 @@ const schema = new GraphQLSchema({
 			},
 			groups: {
 				type: new GraphQLList(Group),
-				resolve() {
-					return [];
+				resolve(src, _, ctx) {
+					return executeQuery(
+						`SELECT * 
+						FROM public.groups g 
+						join public.user_groups ug on g.group_id = ug.group_id
+						join public.users u on ug.user_id = u.user_id 
+						where u.email = $1`,
+						[ctx.user.email],
+					);
 				},
 			},
 			gifts: {
@@ -83,6 +113,39 @@ const schema = new GraphQLSchema({
 	mutation: new GraphQLObjectType({
 		name: "RootMutationType",
 		fields: {
+			addGroup: {
+				type: Group,
+				args: {
+					name: {
+						type: GraphQLString,
+					},
+					description: {
+						type: GraphQLString,
+					},
+					limit: {
+						type: GraphQLFloat,
+					},
+				},
+				async resolve(_, args, ctx) {
+					const sql =
+						"INSERT INTO public.groups (name, description, limit) VALUES ($1, $2, $3) returning *";
+					const values = [args.name, args.description, args.limit];
+					const result = await executeQuery(sql, values);
+
+					if (!result) {
+						return null;
+					}
+
+					const group = result[0];
+
+					await executeQuery(
+						"INSERT INTO public.user_groups (user_id, group_id) VALUES ((select user_id from public.users where email = $1), $2)",
+						[ctx.user.email, group.group_id],
+					);
+
+					return group;
+				},
+			},
 			addGift: {
 				type: Gift,
 				args: {
