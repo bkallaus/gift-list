@@ -2,6 +2,7 @@
 
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Box, Button } from "@mui/material";
+import Link from "next/link";
 import React from "react";
 
 export const AuthButtons = () => {
@@ -18,16 +19,16 @@ export const AuthButtons = () => {
       )}
       {user && (
         <div>
-          <span
+          <Link
+            href="/profile"
             style={{
+              textDecoration: "none",
               color: "black",
             }}
           >
-            {user.name} - {user.email}
-          </span>
-          <Button variant="contained" href="/api/auth/logout">
-            Log Out
-          </Button>
+            {user.name}
+          </Link>
+          <Button href="/api/auth/logout">Log Out</Button>
         </div>
       )}
     </div>

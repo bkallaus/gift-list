@@ -1,34 +1,101 @@
 "use client";
 import { Box, Button, TextField } from "@mui/material";
 import ListCard from "./item-card";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useEffect, useState } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
-export const List = ({
-  label,
-  items,
-  setItems,
-}: {
-  label: string;
-  items: string[];
-  setItems: Dispatch<SetStateAction<string[]>>;
-}) => {
+const GiftsQuery = gql`
+  query {
+    gifts {
+      id
+      title
+      url
+    }
+  }
+`;
+
+const GiftsMutation = gql`
+  mutation AddGift($title: String!, $url: String!) {
+    addGift(title: $title, url: $url) {
+      id
+      title
+      url
+    }
+  }
+`;
+
+const GiftsRemoveMutation = gql`
+  mutation RemoveGift($giftId: Int!) {
+    removeGift(giftId: $giftId) {
+      title
+      url
+    }
+  }
+`;
+
+type Gift = {
+  id?: number;
+  title: string;
+  url?: string;
+};
+
+export const List = () => {
+  const { user } = useUser();
+
+  const { data, error, loading } = useQuery(GiftsQuery);
+  const [mutate] = useMutation(GiftsMutation);
+  const [removeGift] = useMutation(GiftsRemoveMutation);
+
   const [name, setName] = useState("");
+  const [items, setItems] = useState<Gift[]>([]);
 
-  const addItem = () => {
-    setItems([...items, name]);
+  const addItem = async () => {
+    setItems([...items, { title: name }]);
+    mutate({
+      variables: {
+        title: name,
+        url: "https://www.google.com",
+      },
+      refetchQueries: [GiftsQuery],
+    });
+
     setName("");
   };
 
   const removeItem = (remove: string) => {
-    setItems(items.filter((item) => item !== remove));
+    const item = items.find((item) => item.title === remove);
+    setItems(items.filter((item) => item.title !== remove));
+
+    if (item?.id) {
+      removeGift({
+        variables: {
+          giftId: item.id,
+        },
+      });
+    }
   };
 
+  useEffect(() => {
+    if (data) {
+      setItems(data.gifts);
+    }
+  }, [data]);
+
+  if (!user) {
+    return (
+      <Box sx={{ display: "flex" }}>
+        <Button href="/api/auth/login">Login to see list</Button>
+      </Box>
+    );
+  }
+
   return (
-    <>
+    <Box>
       <form>
         <Box display={"flex"} gap={1}>
           <TextField
-            label={label}
+            label={"My List"}
             onChange={(e) => setName(e.target.value)}
             value={name}
           />
@@ -43,10 +110,13 @@ export const List = ({
         </Box>
       </form>
       {items.map((item) => (
-        <>
-          <ListCard item={item} removeItem={removeItem} />
-        </>
+        <ListCard
+          key={item.id}
+          item={item.title}
+          url={item.url}
+          removeItem={removeItem}
+        />
       ))}
-    </>
+    </Box>
   );
 };
