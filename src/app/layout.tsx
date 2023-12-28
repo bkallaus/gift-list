@@ -67,7 +67,6 @@ export default function RootLayout({
                         </Link>
                       </Box>
                     </Box>
-
                     <AuthButtons />
                   </Toolbar>
                 </AppBar>
@@ -76,7 +75,7 @@ export default function RootLayout({
                   sx={{
                     flexGrow: 1,
                     bgcolor: "background.default",
-                    ml: "240px",
+                    mx: { lg: "240px" },
                     mt: ["48px", "56px", "64px"],
                     p: 3,
                   }}

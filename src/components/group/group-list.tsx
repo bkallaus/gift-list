@@ -23,21 +23,42 @@ const GroupList = () => {
 
   return (
     <Box display="flex" flexDirection={"column"} gap={3}>
-      <Button onClick={() => setOpen(true)}>Add Group</Button>
       {data?.groups.map((group: Group) => (
         <Link key={group.name} href={`/group/${group.slug}`}>
-          <Box>
-            <Typography>
+          <Box border={"1px solid black"} borderRadius={3} p={3}>
+            <Typography
+              fontSize={24}
+              fontWeight={600}
+              sx={{
+                textDecoration: "none",
+                color: "black",
+              }}
+            >
               {group.name} (
               {group.limit?.toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
               })}
+              )
             </Typography>
-            )<Typography>{group.description}</Typography>
+            <Typography
+              sx={{
+                textDecoration: "none",
+                color: "black",
+              }}
+            >
+              {group.description}
+            </Typography>
           </Box>
         </Link>
       ))}
+      <Button
+        variant="outlined"
+        color="secondary"
+        onClick={() => setOpen(true)}
+      >
+        Add Group
+      </Button>
       <AddGroup open={open} setOpen={setOpen} />
     </Box>
   );

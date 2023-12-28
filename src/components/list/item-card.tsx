@@ -17,11 +17,14 @@ const ListCard = ({
         justifyContent: "space-between",
         border: "1px solid gray",
         borderRadius: "5px",
+        padding: 1,
       }}
     >
       <Box>
-        <Typography>{item}</Typography>
-        <Typography color="text.secondary">{url}</Typography>
+        <Typography fontWeight={500} fontSize={18}>
+          {item}
+        </Typography>
+        <Typography>{url}</Typography>
       </Box>
       <IconButton
         className="border-gray-400 border rounded p-3 float-right"

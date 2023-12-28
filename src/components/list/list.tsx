@@ -1,9 +1,17 @@
 "use client";
-import { Box, Button, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  LinearProgress,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import ListCard from "./item-card";
 import { useEffect, useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import { Spacing } from "../spacing";
 
 const GiftsQuery = gql`
   query {
@@ -48,6 +56,7 @@ export const List = () => {
   const [removeGift] = useMutation(GiftsRemoveMutation);
 
   const [name, setName] = useState("");
+  const [url, setUrl] = useState("");
   const [items, setItems] = useState<Gift[]>([]);
 
   const addItem = async () => {
@@ -55,11 +64,12 @@ export const List = () => {
     mutate({
       variables: {
         title: name,
-        url: "https://www.google.com",
+        url: url || "",
       },
       refetchQueries: [GiftsQuery],
     });
 
+    setUrl("");
     setName("");
   };
 
@@ -92,31 +102,50 @@ export const List = () => {
 
   return (
     <Box>
-      <form>
-        <Box display={"flex"} gap={1}>
-          <TextField
-            label={"My List"}
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-          />
-          <Button
-            variant="contained"
-            type="submit"
-            disabled={!name}
-            onClick={addItem}
-          >
-            Add
-          </Button>
+      <Typography textAlign={"center"} fontWeight={600} fontSize={24}>
+        My Wish List
+      </Typography>
+      <Paper>
+        <Box display={"flex"} gap={1} padding={3}>
+          <Box>
+            <TextField
+              size="small"
+              label={"Gift Name"}
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+            />
+            <Spacing />
+            <TextField
+              size="small"
+              label={"Url"}
+              onChange={(e) => setUrl(e.target.value)}
+              value={url}
+            />
+          </Box>
+          <Box>
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={!name}
+              onClick={addItem}
+            >
+              Add
+            </Button>
+          </Box>
         </Box>
-      </form>
-      {items.map((item) => (
-        <ListCard
-          key={item.id}
-          item={item.title}
-          url={item.url}
-          removeItem={removeItem}
-        />
-      ))}
+      </Paper>
+      <Spacing />
+      <Box display={"flex"} flexDirection={"column"} gap={1}>
+        {loading && <LinearProgress />}
+        {items.map((item) => (
+          <ListCard
+            key={item.id}
+            item={item.title}
+            url={item.url}
+            removeItem={removeItem}
+          />
+        ))}
+      </Box>
     </Box>
   );
 };
