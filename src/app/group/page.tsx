@@ -6,7 +6,7 @@ import GroupList from "@/components/group/group-list";
 
 export default function HomePage() {
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box>
       <Typography variant="h1">Groups</Typography>
       <GroupList />
     </Box>

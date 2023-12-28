@@ -3,47 +3,42 @@ import { Box, Button, Dialog, TextField, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import { Dispatch, SetStateAction } from "react";
 import { Spacing } from "../spacing";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
+import { Add_Member, GiftsQuery } from "../group/group-queries";
+import * as Yup from "yup";
 
-type Group = {
-  id: string;
-  name: string;
-  limit: number;
-};
-
-const ADD_GROUP_MUTATION = gql`
-  mutation AddGroup($name: String!, $limit: Float!, $description: String) {
-    addGroup(name: $name, limit: $limit, description: $description) {
-      name
-      description
-      limit
-    }
-  }
-`;
-const AddGroup = ({
+const AddMember = ({
   open,
   setOpen,
+  groupSlug,
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  groupSlug: string;
 }) => {
-  const [mutation] = useMutation(ADD_GROUP_MUTATION);
+  const [mutation] = useMutation(Add_Member);
+
   const form = useFormik({
     initialValues: {
-      name: "",
-      description: "",
-      limit: 0,
+      email: "",
+      firstName: "",
+      lastName: "",
     },
     onSubmit: (values) => {
       mutation({
         variables: {
-          name: values.name,
-          limit: Number(values.limit),
-          description: values.description,
+          groupSlug,
+          email: values.email,
+          firstName: values.firstName,
+          lastName: values.lastName,
         },
+        refetchQueries: [GiftsQuery],
       });
       setOpen(false);
     },
+    validationSchema: Yup.object({
+      email: Yup.string().email("Invalid email address").required("Required"),
+    }),
   });
 
   return (
@@ -57,27 +52,27 @@ const AddGroup = ({
             <Box display={"flex"} gap={1} flexDirection={"column"}>
               <TextField
                 required
-                label="Name of Group"
-                name="name"
+                helperText={Boolean(form.submitCount) && form.errors.email}
+                error={Boolean(form.errors.email)}
+                label="Email"
+                name="email"
                 onChange={form.handleChange}
               />
               <TextField
-                label="Description"
-                name="description"
+                label="First Name"
+                name="firstName"
                 onChange={form.handleChange}
               />
               <TextField
-                required
-                inputMode="numeric"
-                label="Gift Limit"
-                name="limit"
+                label="Last Name"
+                name="lastName"
                 onChange={form.handleChange}
               />
             </Box>
           </Box>
           <Spacing />
           <Button variant="contained" type="submit">
-            Save
+            Add Member
           </Button>
         </Box>
       </form>
@@ -85,4 +80,4 @@ const AddGroup = ({
   );
 };
 
-export default AddGroup;
+export default AddMember;

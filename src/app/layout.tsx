@@ -34,11 +34,40 @@ export default function RootLayout({
                         Gift Exchange
                       </Typography>
                     </Link>
-                    <Typography
-                      sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+                    <Box
+                      sx={{
+                        flexGrow: 1,
+                        display: { xs: "none", sm: "block" },
+                        margin: "auto",
+                      }}
                     >
-                      &nbsp;
-                    </Typography>
+                      <Box
+                        display={"flex"}
+                        flexDirection={"row"}
+                        justifyContent={"center"}
+                        gap={3}
+                      >
+                        <Link
+                          href="/list"
+                          style={{
+                            textDecoration: "none",
+                          }}
+                        >
+                          <Typography color="text.primary">My List</Typography>
+                        </Link>
+                        <Link
+                          href="/group"
+                          style={{
+                            textDecoration: "none",
+                          }}
+                        >
+                          <Typography color="text.primary">
+                            My Groups
+                          </Typography>
+                        </Link>
+                      </Box>
+                    </Box>
+
                     <AuthButtons />
                   </Toolbar>
                 </AppBar>

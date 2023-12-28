@@ -11,6 +11,9 @@ export default function HomePage() {
       <Button LinkComponent={Link} href="/list">
         My List
       </Button>
+      <Button LinkComponent={Link} href="/group">
+        My Groups
+      </Button>
     </Box>
   );
 }
