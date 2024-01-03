@@ -208,6 +208,37 @@ const schema = new GraphQLSchema({
 					return user;
 				},
 			},
+			editGroup: {
+				type: Group,
+				args: {
+					groupSlug: {
+						type: new GraphQLNonNull(GraphQLString),
+					},
+					name: {
+						type: GraphQLString,
+					},
+					description: {
+						type: GraphQLString,
+					},
+					limit: {
+						type: GraphQLFloat,
+					},
+				},
+				async resolve(_, args, ctx) {
+					//consider checking on email
+					const sql =
+						"UPDATE public.groups SET name = $1, description = $2, gift_limit = $3 WHERE slug = $4 returning *";
+					const values = [
+						args.name,
+						args.description,
+						args.limit,
+						args.groupSlug,
+					];
+					const result = await executeQuery(sql, values);
+
+					return result ? result[0] : null;
+				},
+			},
 			removeUserFromGroup: {
 				type: User,
 				args: {

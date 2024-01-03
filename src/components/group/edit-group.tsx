@@ -10,10 +10,12 @@ import {
 import { useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import AddMember from "../member/add-member";
-import { GiftsQuery, Remove_Member } from "./group-queries";
+import { GroupQuery, Remove_Member } from "./group-queries";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Spacing } from "../spacing";
+import ConfirmDialog from "../confirm-dialog";
+import EditGroupModalButton from "./edit-group-modal";
 
 type Member = {
   email: string;
@@ -25,7 +27,7 @@ const EditGroup = ({ groupSlug }: { groupSlug: string }) => {
   const [open, setOpen] = useState(false);
   const [removeMutation] = useMutation(Remove_Member);
   const { user } = useUser();
-  const { data, loading } = useQuery(GiftsQuery, {
+  const { data, loading } = useQuery(GroupQuery, {
     variables: {
       groupSlug,
     },
@@ -37,13 +39,13 @@ const EditGroup = ({ groupSlug }: { groupSlug: string }) => {
         groupSlug,
         email,
       },
-      refetchQueries: [GiftsQuery],
+      refetchQueries: [GroupQuery],
     });
   };
 
   return (
     <Box>
-      <Typography fontSize={48} fontWeight={500}>
+      <Typography fontSize={48} fontWeight={500} display={"flex"} gap={3}>
         {data?.group?.name}
       </Typography>
       <Typography>{data?.group?.description}</Typography>
@@ -54,6 +56,8 @@ const EditGroup = ({ groupSlug }: { groupSlug: string }) => {
           currency: "USD",
         })}
       </Typography>
+      <Spacing />
+      <EditGroupModalButton group={data?.group} />
       <Spacing />
       {loading && <LinearProgress />}
       <Box display={"flex"} flexDirection={"column"} gap={1}>
@@ -84,6 +88,8 @@ const MemberCard = ({
   onRemoveMember: (email: string) => void;
   userEmail: string;
 }) => {
+  const [showConfirm, setShowConfirm] = useState(false);
+
   return (
     <Box
       key={member.email}
@@ -105,11 +111,18 @@ const MemberCard = ({
       {userEmail !== member.email && (
         <IconButton
           className="border-gray-400 border rounded p-3 float-right"
-          onClick={() => onRemoveMember(member.email)}
+          onClick={() => setShowConfirm(true)}
         >
           <DeleteIcon />
         </IconButton>
       )}
+      <ConfirmDialog
+        title={"Remove Member"}
+        description={`Are you sure you want to remove ${member.email}?`}
+        setOpen={setShowConfirm}
+        open={showConfirm}
+        confirmAction={() => onRemoveMember(member.email)}
+      />
     </Box>
   );
 };

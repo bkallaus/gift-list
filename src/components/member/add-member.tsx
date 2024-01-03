@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import { Dispatch, SetStateAction } from "react";
 import { Spacing } from "../spacing";
 import { useMutation } from "@apollo/client";
-import { Add_Member, GiftsQuery } from "../group/group-queries";
+import { Add_Member, GroupQuery } from "../group/group-queries";
 import * as Yup from "yup";
 
 const AddMember = ({
@@ -32,7 +32,7 @@ const AddMember = ({
           firstName: values.firstName,
           lastName: values.lastName,
         },
-        refetchQueries: [GiftsQuery],
+        refetchQueries: [GroupQuery],
       });
       setOpen(false);
     },

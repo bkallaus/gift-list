@@ -9,9 +9,10 @@ export type Group = {
 	members: string[];
 };
 
-export const GiftsQuery = gql`
-  query GiftsQuery($groupSlug: String!) {
+export const GroupQuery = gql`
+  query GroupQuery($groupSlug: String!) {
     group(groupSlug: $groupSlug) {
+      slug
       name
       description
       limit
