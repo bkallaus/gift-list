@@ -7,17 +7,25 @@ import {
   LinearProgress,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 import { useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import AddMember from "../member/add-member";
-import { GroupQuery, Remove_Member } from "./group-queries";
+import {
+  Assign_Names,
+  GroupQuery,
+  Remove_Group,
+  Remove_Member,
+} from "./group-queries";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Spacing } from "../spacing";
 import ConfirmDialog from "../confirm-dialog";
 import EditGroupModalButton from "./edit-group-modal";
+import { useRouter } from "next/navigation";
+import AddMember from "../member/add-member";
 
 type Member = {
+  slug: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -25,8 +33,12 @@ type Member = {
 
 const EditGroup = ({ groupSlug }: { groupSlug: string }) => {
   const [open, setOpen] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [removeMutation] = useMutation(Remove_Member);
+  const [removeGroupMutation] = useMutation(Remove_Group);
+  const [assignNames] = useMutation(Assign_Names);
   const { user } = useUser();
+  const navigation = useRouter();
   const { data, loading } = useQuery(GroupQuery, {
     variables: {
       groupSlug,
@@ -43,10 +55,32 @@ const EditGroup = ({ groupSlug }: { groupSlug: string }) => {
     });
   };
 
+  const onRemoveGroup = () => {
+    removeGroupMutation({
+      variables: {
+        groupSlug,
+      },
+    });
+    navigation.push("/group");
+  };
+
+  const onAssignNames = () => {
+    assignNames({
+      variables: {
+        groupSlug,
+      },
+    });
+  };
+
+  const recipient = data?.group?.giftReceipient;
+
   return (
     <Box>
       <Typography fontSize={48} fontWeight={500} display={"flex"} gap={3}>
         {data?.group?.name}
+      </Typography>
+      <Typography>
+        {recipient ? `My Drawn Name (${recipient?.email})` : "No Drawn Name"}
       </Typography>
       <Typography>{data?.group?.description}</Typography>
       <Typography>
@@ -56,8 +90,21 @@ const EditGroup = ({ groupSlug }: { groupSlug: string }) => {
           currency: "USD",
         })}
       </Typography>
+
+      <Spacing />
+      <Button variant="outlined" onClick={() => setOpen(true)}>
+        Add Member
+      </Button>
       <Spacing />
       <EditGroupModalButton group={data?.group} />
+      <Spacing />
+      <Button variant="outlined" onClick={() => setShowConfirm(true)}>
+        Delete Group{" "}
+      </Button>
+      <Spacing />
+      <Button variant="outlined" onClick={onAssignNames}>
+        Assign Names{" "}
+      </Button>
       <Spacing />
       {loading && <LinearProgress />}
       <Box display={"flex"} flexDirection={"column"} gap={1}>
@@ -66,14 +113,20 @@ const EditGroup = ({ groupSlug }: { groupSlug: string }) => {
             key={member.email}
             member={member}
             onRemoveMember={onRemoveMember}
+            isDrawnName={recipient?.email === member.email}
             userEmail={user?.email || ""}
+            groupSlug={groupSlug}
           />
         ))}
       </Box>
       <Spacing />
-      <Button variant="outlined" onClick={() => setOpen(true)}>
-        Add Member
-      </Button>
+      <ConfirmDialog
+        title={"Delete Group"}
+        description={`Are you sure you want to remove ${data?.group.name}?`}
+        setOpen={setShowConfirm}
+        open={showConfirm}
+        confirmAction={() => onRemoveGroup()}
+      />
       <AddMember setOpen={setOpen} open={open} groupSlug={groupSlug} />
     </Box>
   );
@@ -82,11 +135,15 @@ const EditGroup = ({ groupSlug }: { groupSlug: string }) => {
 const MemberCard = ({
   member,
   onRemoveMember,
+  isDrawnName,
   userEmail,
+  groupSlug,
 }: {
   member: Member;
   onRemoveMember: (email: string) => void;
+  isDrawnName: boolean;
   userEmail: string;
+  groupSlug: string;
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -94,20 +151,29 @@ const MemberCard = ({
     <Box
       key={member.email}
       display={"flex"}
-      border={"1px solid black"}
+      border={"1px solid gainsboro"}
       borderRadius={3}
       p={3}
       alignItems={"center"}
       justifyContent={"space-between"}
     >
-      <Box>
-        <Typography fontWeight={500}>
-          {member.firstName || member.lastName
-            ? ` ${member.firstName} ${member.lastName}`
-            : member.email}
-        </Typography>
-        <Typography>{member.email}</Typography>
-      </Box>
+      <Link
+        href={`/group/${groupSlug}/${member.slug}`}
+        style={{
+          textDecoration: "none",
+          color: "black",
+        }}
+      >
+        <Box>
+          <Typography fontWeight={500}>
+            {member.firstName || member.lastName
+              ? ` ${member.firstName} ${member.lastName}`
+              : member.email}{" "}
+            {isDrawnName && "(Drawn Name)"}
+          </Typography>
+          <Typography>{member.email}</Typography>
+        </Box>
+      </Link>
       {userEmail !== member.email && (
         <IconButton
           className="border-gray-400 border rounded p-3 float-right"

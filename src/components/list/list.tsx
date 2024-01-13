@@ -14,11 +14,22 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { Spacing } from "../spacing";
 
 const GiftsQuery = gql`
-  query {
-    gifts {
+  query ($userSlug: String, $groupSlug: String) {
+    gifts(userSlug: $userSlug, groupSlug: $groupSlug) {
       id
       title
       url
+    }
+  }
+`;
+
+const UserQuery = gql`
+  query User($userSlug: String!) {
+    user(slug: $userSlug) {
+      slug
+      email
+      firstName
+      lastName
     }
   }
 `;
@@ -48,16 +59,37 @@ type Gift = {
   url?: string;
 };
 
-export const List = () => {
+export const List = ({
+  groupSlug,
+  userSlug,
+}: {
+  groupSlug?: string;
+  userSlug?: string;
+}) => {
   const { user } = useUser();
 
-  const { data, error, loading } = useQuery(GiftsQuery);
+  const { data, error, loading } = useQuery(GiftsQuery, {
+    variables: {
+      groupSlug,
+      userSlug,
+    },
+  });
+  const { data: userData } = useQuery(UserQuery, {
+    skip: !userSlug,
+    variables: {
+      userSlug,
+    },
+  });
+
   const [mutate] = useMutation(GiftsMutation);
   const [removeGift] = useMutation(GiftsRemoveMutation);
 
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
   const [items, setItems] = useState<Gift[]>([]);
+  const canEdit =
+    (!groupSlug && !userSlug) || user?.email === userData?.user?.email;
+  const userTitle = `${userData?.user?.firstName} ${userData?.user?.lastName} (${userData?.user?.email})`;
 
   const addItem = async () => {
     setItems([...items, { title: name }]);
@@ -103,46 +135,55 @@ export const List = () => {
   return (
     <Box>
       <Typography textAlign={"center"} fontWeight={600} fontSize={24}>
-        My Wish List
+        {canEdit ? "My List" : <>{userTitle} Gift List</>}
       </Typography>
-      <Paper>
-        <Box display={"flex"} gap={1} padding={3}>
-          <Box>
-            <TextField
-              size="small"
-              label={"Gift Name"}
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-            />
-            <Spacing />
-            <TextField
-              size="small"
-              label={"Url"}
-              onChange={(e) => setUrl(e.target.value)}
-              value={url}
-            />
+      {canEdit && (
+        <Paper>
+          <Box display={"flex"} gap={1} padding={3}>
+            <Box>
+              <TextField
+                size="small"
+                label={"Gift Name"}
+                onChange={(e) => setName(e.target.value)}
+                value={name}
+              />
+              <Spacing />
+              <TextField
+                size="small"
+                label={"Url"}
+                onChange={(e) => setUrl(e.target.value)}
+                value={url}
+              />
+            </Box>
+            <Box>
+              <Button
+                variant="contained"
+                type="submit"
+                disabled={!name}
+                onClick={addItem}
+              >
+                Add
+              </Button>
+            </Box>
           </Box>
-          <Box>
-            <Button
-              variant="contained"
-              type="submit"
-              disabled={!name}
-              onClick={addItem}
-            >
-              Add
-            </Button>
-          </Box>
-        </Box>
-      </Paper>
+        </Paper>
+      )}
       <Spacing />
       <Box display={"flex"} flexDirection={"column"} gap={1}>
         {loading && <LinearProgress />}
+        {items.length < 1 && (
+          <Typography textAlign={"center"}>
+            {canEdit
+              ? "No gifts added"
+              : `${userTitle} has not added any gifts`}
+          </Typography>
+        )}
         {items.map((item) => (
           <ListCard
             key={item.id}
             item={item.title}
             url={item.url}
-            removeItem={removeItem}
+            removeItem={canEdit ? removeItem : undefined}
           />
         ))}
       </Box>

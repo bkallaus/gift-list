@@ -8,14 +8,14 @@ const ListCard = ({
 }: {
   item: string;
   url?: string;
-  removeItem: (id: string) => void;
+  removeItem?: (id: string) => void;
 }) => {
   return (
     <Box
       sx={{
         display: "flex",
         justifyContent: "space-between",
-        border: "1px solid gray",
+        border: "1px solid gainsboro",
         borderRadius: "5px",
         padding: 1,
       }}
@@ -26,12 +26,14 @@ const ListCard = ({
         </Typography>
         <Typography>{url}</Typography>
       </Box>
-      <IconButton
-        className="border-gray-400 border rounded p-3 float-right"
-        onClick={() => removeItem(item)}
-      >
-        <DeleteIcon />
-      </IconButton>
+      {removeItem && (
+        <IconButton
+          className="border-gray-400 border rounded p-3 float-right"
+          onClick={() => removeItem(item)}
+        >
+          <DeleteIcon />
+        </IconButton>
+      )}
     </Box>
   );
 };

@@ -16,7 +16,14 @@ export const GroupQuery = gql`
       name
       description
       limit
+      giftReceipient {
+        slug
+        email
+        firstName
+        lastName
+      }
       members {
+        slug
         email
         firstName
         lastName
@@ -80,6 +87,22 @@ export const Remove_Member = gql`
   mutation RemoveMember($groupSlug: String!, $email: String!) {
     removeUserFromGroup(groupSlug: $groupSlug, email: $email) {
       email
+    }
+  }
+`;
+
+export const Remove_Group = gql`
+  mutation RemoveGroup($groupSlug: String!) {
+    removeGroup(groupSlug: $groupSlug) {
+      slug
+    }
+  }
+`;
+
+export const Assign_Names = gql`
+  mutation AssignNames($groupSlug: String!) {
+    assignNames(groupSlug: $groupSlug) {
+      slug
     }
   }
 `;

@@ -24,8 +24,15 @@ const GroupList = () => {
   return (
     <Box display="flex" flexDirection={"column"} gap={3}>
       {data?.groups.map((group: Group) => (
-        <Link key={group.name} href={`/group/${group.slug}`}>
-          <Box border={"1px solid black"} borderRadius={3} p={3}>
+        <Link
+          key={group.name}
+          href={`/group/${group.slug}`}
+          style={{
+            textDecoration: "none",
+            color: "black",
+          }}
+        >
+          <Box border={"1px solid gainsboro"} borderRadius={3} p={3}>
             <Typography
               fontSize={24}
               fontWeight={600}
@@ -34,12 +41,14 @@ const GroupList = () => {
                 color: "black",
               }}
             >
-              {group.name} (
+              {group.name}
+            </Typography>
+            <Typography>
+              Gift Limit:{" "}
               {group.limit?.toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
               })}
-              )
             </Typography>
             <Typography
               sx={{
@@ -52,13 +61,11 @@ const GroupList = () => {
           </Box>
         </Link>
       ))}
-      <Button
-        variant="outlined"
-        color="secondary"
-        onClick={() => setOpen(true)}
-      >
-        Add Group
-      </Button>
+      <Box>
+        <Button variant="contained" onClick={() => setOpen(true)}>
+          Add Group
+        </Button>
+      </Box>
       <AddGroup open={open} setOpen={setOpen} />
     </Box>
   );

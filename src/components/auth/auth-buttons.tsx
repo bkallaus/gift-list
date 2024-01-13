@@ -32,7 +32,7 @@ export const AuthButtons = () => {
             {user.name}
             <Person />
           </Link>
-          {/* <Button href="/api/auth/logout">Log Out</Button> */}
+          <Button href="/api/auth/logout">Log Out</Button>
         </Box>
       )}
     </Box>

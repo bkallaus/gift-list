@@ -19,7 +19,7 @@ export default function HomePage() {
       <Link href="/list">
         <Box
           p={5}
-          border={"1px solid black"}
+          border={"1px solid gainsboro"}
           borderRadius={3}
           sx={{ textDecoration: "none", color: "black" }}
         >
@@ -33,7 +33,7 @@ export default function HomePage() {
       <Link href="/group">
         <Box
           p={5}
-          border={"1px solid black"}
+          border={"1px solid gainsboro"}
           borderRadius={3}
           sx={{ textDecoration: "none", color: "black" }}
         >

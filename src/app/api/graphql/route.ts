@@ -12,6 +12,7 @@ import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import { NextResponse } from "next/server";
 import { executeQuery, getPool } from "@/services/database";
 import { v4 } from "uuid";
+import { chooseNames } from "@/services/choose-names";
 
 const Gift = new GraphQLObjectType({
 	name: "Gift",
@@ -70,6 +71,27 @@ const Group = new GraphQLObjectType({
 		slug: {
 			type: GraphQLString,
 		},
+		giftReceipient: {
+			type: User,
+			async resolve(src, _, ctx) {
+				const sql =
+					"select gift_recipient_id from public.user_groups where user_id = (select user_id from public.users where email = $1) and group_id = $2";
+				const values = [ctx.user.email, src.group_id];
+				const result = await executeQuery(sql, values);
+				console.log(result);
+
+				if (!result[0]) {
+					return null;
+				}
+
+				const recipient = await executeQuery(
+					"SELECT * FROM public.users where user_id = $1",
+					[result[0].gift_recipient_id],
+				);
+
+				return recipient[0];
+			},
+		},
 		members: {
 			type: new GraphQLList(User),
 			resolve(src, _, ctx) {
@@ -83,14 +105,44 @@ const Group = new GraphQLObjectType({
 	},
 });
 
+const hasAccessToGroup = async ({
+	groupSlug,
+	email,
+}: {
+	groupSlug: string;
+	email: string;
+}) => {
+	const sql = `SELECT g.*
+		FROM public.groups g 
+		join public.user_groups ug on g.group_id = ug.group_id 
+		join public.users u on ug.user_id = u.user_id 
+		where u.email = $1 and g.slug = $2`;
+
+	const values = [email, groupSlug];
+
+	const result = await executeQuery(sql, values);
+
+	return result.length ? result[0] : null;
+};
+
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
 		name: "RootQueryType",
 		fields: {
-			hello: {
-				type: GraphQLString,
-				resolve() {
-					return "world";
+			user: {
+				type: User,
+				args: {
+					slug: {
+						type: GraphQLString,
+					},
+				},
+				async resolve(src, args) {
+					const result = await executeQuery(
+						"SELECT * FROM public.users where slug = $1",
+						[args.slug],
+					);
+
+					return result[0];
 				},
 			},
 			groups: {
@@ -101,7 +153,7 @@ const schema = new GraphQLSchema({
 						FROM public.groups g 
 						join public.user_groups ug on g.group_id = ug.group_id
 						join public.users u on ug.user_id = u.user_id 
-						where u.email = $1`,
+						where u.email = $1 and g.is_active = true`,
 						[ctx.user.email],
 					);
 				},
@@ -114,8 +166,11 @@ const schema = new GraphQLSchema({
 					},
 				},
 				async resolve(_, args, ctx) {
-					const sql =
-						"SELECT g.* FROM public.groups g join public.user_groups ug on g.group_id = ug.group_id join public.users u on ug.user_id = u.user_id where u.email = $1 and g.slug = $2";
+					const sql = `SELECT g.* 
+					FROM public.groups g 
+					join public.user_groups ug on g.group_id = ug.group_id 
+					join public.users u on ug.user_id = u.user_id 
+					where u.email = $1 and g.slug = $2`;
 
 					const values = [ctx.user.email, args.groupSlug];
 					const result = await executeQuery(sql, values);
@@ -125,7 +180,37 @@ const schema = new GraphQLSchema({
 			},
 			gifts: {
 				type: new GraphQLList(Gift),
-				async resolve(src, _, ctx) {
+				args: {
+					userSlug: {
+						type: GraphQLString,
+					},
+					groupSlug: {
+						type: GraphQLString,
+					},
+				},
+				async resolve(src, args, ctx) {
+					if (args.userSlug && args.groupSlug) {
+						const hasAccess = await hasAccessToGroup({
+							groupSlug: args.groupSlug,
+							email: ctx.user.email,
+						});
+
+						if (!hasAccess) {
+							return null;
+						}
+
+						//convert to has access to group
+						return executeQuery(
+							`SELECT ug.* 
+							FROM public.user_gifts ug 
+							JOIN public.users u on ug.user_id = u.user_id
+							JOIN public.user_groups ug2 on ug2.user_id = u.user_id
+							JOIN public.groups g on g.group_id = ug2.group_id
+							where g.slug = $1 and u.slug = $2`,
+							[args.groupSlug, args.userSlug],
+						);
+					}
+
 					return executeQuery(
 						"SELECT * FROM public.user_gifts ug join public.users u on ug.user_id = u.user_id where u.email = $1",
 						[ctx.user.email],
@@ -168,6 +253,53 @@ const schema = new GraphQLSchema({
 					);
 
 					return group;
+				},
+			},
+			assignNames: {
+				type: Group,
+				args: {
+					groupSlug: {
+						type: new GraphQLNonNull(GraphQLString),
+					},
+				},
+				async resolve(_, args, ctx) {
+					const hasAccess = await hasAccessToGroup({
+						groupSlug: args.groupSlug,
+						email: ctx.user.email,
+					});
+
+					if (!hasAccess) {
+						return null;
+					}
+
+					const slugs = await executeQuery(
+						`SELECT u.slug FROM public.groups g 
+						join public.user_groups ug on g.group_id = ug.group_id
+						join public.users u on ug.user_id = u.user_id
+						where g.slug = $1`,
+						[args.groupSlug],
+					);
+
+					const pairs = chooseNames(slugs.map((s) => s.slug));
+
+					const sql = `UPDATE public.user_groups
+					SET gift_recipient_id = (select user_id from public.users where slug = $1)
+					WHERE user_id = (select user_id from public.users where slug = $2)
+					AND group_id = $3 returning *`;
+
+					const response = await Promise.all(
+						pairs.map(async (pair) => {
+							return await executeQuery(sql, [
+								pair.reciever,
+								pair.giver,
+								hasAccess.group_id,
+							]);
+						}),
+					);
+
+					return executeQuery("SELECT * FROM public.groups where slug = $1", [
+						args.groupSlug,
+					]);
 				},
 			},
 			addMember: {
@@ -234,6 +366,31 @@ const schema = new GraphQLSchema({
 						args.limit,
 						args.groupSlug,
 					];
+					const result = await executeQuery(sql, values);
+
+					return result ? result[0] : null;
+				},
+			},
+			removeGroup: {
+				type: Group,
+				args: {
+					groupSlug: {
+						type: new GraphQLNonNull(GraphQLString),
+					},
+				},
+				async resolve(_, args, ctx) {
+					const hasAccess = hasAccessToGroup({
+						groupSlug: args.groupSlug,
+						email: ctx.user.email,
+					});
+
+					if (!hasAccess) {
+						return null;
+					}
+
+					const sql =
+						"update public.groups set is_active=false WHERE slug = $1 returning *";
+					const values = [args.groupSlug];
 					const result = await executeQuery(sql, values);
 
 					return result ? result[0] : null;
