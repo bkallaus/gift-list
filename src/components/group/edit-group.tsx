@@ -34,10 +34,13 @@ type Member = {
 const EditGroup = ({ groupSlug }: { groupSlug: string }) => {
   const [open, setOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+
   const [removeMutation] = useMutation(Remove_Member);
   const [removeGroupMutation] = useMutation(Remove_Group);
   const [assignNames] = useMutation(Assign_Names);
+
   const { user } = useUser();
+
   const navigation = useRouter();
   const { data, loading } = useQuery(GroupQuery, {
     variables: {
@@ -73,11 +76,13 @@ const EditGroup = ({ groupSlug }: { groupSlug: string }) => {
   };
 
   const recipient = data?.group?.giftReceipient;
+  const isAdmin = data?.group?.isAdmin;
 
   return (
     <Box>
       <Typography fontSize={48} fontWeight={500} display={"flex"} gap={3}>
-        {data?.group?.name}
+        {data?.group?.name}{" "}
+        {isAdmin && <EditGroupModalButton group={data?.group} />}
       </Typography>
       <Typography>
         {recipient ? `My Drawn Name (${recipient?.email})` : "No Drawn Name"}
@@ -92,19 +97,21 @@ const EditGroup = ({ groupSlug }: { groupSlug: string }) => {
       </Typography>
 
       <Spacing />
-      <Button variant="outlined" onClick={() => setOpen(true)}>
-        Add Member
-      </Button>
-      <Spacing />
-      <EditGroupModalButton group={data?.group} />
-      <Spacing />
-      <Button variant="outlined" onClick={() => setShowConfirm(true)}>
-        Delete Group{" "}
-      </Button>
-      <Spacing />
-      <Button variant="outlined" onClick={onAssignNames}>
-        Assign Names{" "}
-      </Button>
+      {isAdmin && (
+        <Box display={"flex"} gap={3}>
+          <Button variant="outlined" onClick={() => setOpen(true)}>
+            Add Member
+          </Button>
+          <Spacing />
+          <Button variant="outlined" onClick={() => setShowConfirm(true)}>
+            Delete Group{" "}
+          </Button>
+          <Spacing />
+          <Button variant="outlined" onClick={onAssignNames}>
+            Assign Names{" "}
+          </Button>
+        </Box>
+      )}
       <Spacing />
       {loading && <LinearProgress />}
       <Box display={"flex"} flexDirection={"column"} gap={1}>

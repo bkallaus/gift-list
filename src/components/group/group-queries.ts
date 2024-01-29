@@ -16,6 +16,7 @@ export const GroupQuery = gql`
       name
       description
       limit
+      isAdmin
       giftReceipient {
         slug
         email

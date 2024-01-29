@@ -1,12 +1,17 @@
 import { Box, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Redeem, RemoveShoppingCart } from "@mui/icons-material";
 
 const ListCard = ({
   item,
   url,
+  purchased,
+  purchase,
   removeItem,
 }: {
   item: string;
+  purchased?: boolean;
+  purchase: () => void;
   url?: string;
   removeItem?: (id: string) => void;
 }) => {
@@ -26,6 +31,13 @@ const ListCard = ({
         </Typography>
         <Typography>{url}</Typography>
       </Box>
+      <IconButton
+        title={purchased ? "Mark as Not Purchased" : "Mark as Purchased"}
+        className="border-gray-400 border rounded p-3 float-right"
+        onClick={purchase}
+      >
+        {purchased ? <RemoveShoppingCart /> : <Redeem />}
+      </IconButton>
       {removeItem && (
         <IconButton
           className="border-gray-400 border rounded p-3 float-right"

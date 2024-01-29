@@ -7,6 +7,7 @@ import {
 	GraphQLFloat,
 	GraphQLInt,
 	GraphQLNonNull,
+	GraphQLBoolean,
 } from "graphql";
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import { NextResponse } from "next/server";
@@ -25,6 +26,12 @@ const Gift = new GraphQLObjectType({
 		},
 		url: {
 			type: GraphQLString,
+		},
+		purchased: {
+			type: GraphQLBoolean,
+			resolve(src) {
+				return !!src.purchased_by;
+			},
 		},
 	},
 });
@@ -71,6 +78,20 @@ const Group = new GraphQLObjectType({
 		slug: {
 			type: GraphQLString,
 		},
+		isAdmin: {
+			type: GraphQLBoolean,
+			async resolve(src, _, ctx) {
+				const sql = `SELECT * FROM public.groups g
+				join public.users u on g.admin = u.user_id 
+				where u.email = $1 and g.group_id = $2`;
+
+				const values = [ctx.user.email, src.group_id];
+
+				const result = await executeQuery(sql, values);
+
+				return result.length ? true : false;
+			},
+		},
 		giftReceipient: {
 			type: User,
 			async resolve(src, _, ctx) {
@@ -78,7 +99,6 @@ const Group = new GraphQLObjectType({
 					"select gift_recipient_id from public.user_groups where user_id = (select user_id from public.users where email = $1) and group_id = $2";
 				const values = [ctx.user.email, src.group_id];
 				const result = await executeQuery(sql, values);
-				console.log(result);
 
 				if (!result[0]) {
 					return null;
@@ -212,7 +232,7 @@ const schema = new GraphQLSchema({
 					}
 
 					return executeQuery(
-						"SELECT * FROM public.user_gifts ug join public.users u on ug.user_id = u.user_id where u.email = $1",
+						"SELECT * FROM public.user_gifts ug join public.users u on ug.user_id = u.user_id where u.email = $1 order by ug.id asc",
 						[ctx.user.email],
 					);
 				},
@@ -431,6 +451,34 @@ const schema = new GraphQLSchema({
 					const values = [ctx.user.email, args.title, args.url];
 					const result = await executeQuery(sql, values);
 
+					return result ? result[0] : null;
+				},
+			},
+			purchaseGift: {
+				type: Gift,
+				args: {
+					giftId: {
+						type: GraphQLInt,
+					},
+					purchased: {
+						type: GraphQLBoolean,
+					},
+				},
+				async resolve(_, args, ctx) {
+					if (args.purchased) {
+						const sql =
+							"UPDATE public.user_gifts SET purchased_by = (select user_id from public.users where email = $1) WHERE id = $2 returning *";
+						const values = [ctx.user.email, args.giftId];
+
+						const result = await executeQuery(sql, values);
+
+						return result ? result[0] : null;
+					}
+
+					const sql =
+						"UPDATE public.user_gifts SET purchased_by = null WHERE id = $1 returning *";
+					const values = [args.giftId];
+					const result = await executeQuery(sql, values);
 					return result ? result[0] : null;
 				},
 			},

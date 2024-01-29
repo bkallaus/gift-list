@@ -19,6 +19,7 @@ const GiftsQuery = gql`
       id
       title
       url
+      purchased
     }
   }
 `;
@@ -53,10 +54,20 @@ const GiftsRemoveMutation = gql`
   }
 `;
 
+const PurchaseMutation = gql`
+  mutation PurchaseGift($giftId: Int!, $purchased: Boolean!) {
+    purchaseGift(giftId: $giftId, purchased: $purchased) {
+      title
+      url
+    }
+  }
+`;
+
 type Gift = {
   id?: number;
   title: string;
   url?: string;
+  purchased?: boolean;
 };
 
 export const List = ({
@@ -83,6 +94,7 @@ export const List = ({
 
   const [mutate] = useMutation(GiftsMutation);
   const [removeGift] = useMutation(GiftsRemoveMutation);
+  const [purchaseGift] = useMutation(PurchaseMutation);
 
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
@@ -182,6 +194,16 @@ export const List = ({
           <ListCard
             key={item.id}
             item={item.title}
+            purchased={item.purchased}
+            purchase={() => {
+              purchaseGift({
+                variables: {
+                  giftId: item.id,
+                  purchased: !item.purchased,
+                },
+                refetchQueries: [GiftsQuery],
+              });
+            }}
             url={item.url}
             removeItem={canEdit ? removeItem : undefined}
           />
