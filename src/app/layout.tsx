@@ -1,10 +1,10 @@
 import React from "react";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
-import ThemeRegistry from "@/components/theme/ThemeRegistry";
-import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Toolbar, Typography } from "@mui/material";
 import { AuthButtons } from "@/components/auth/auth-buttons";
 import { ApolloWrapper } from "@/components/apollo-wrapper";
 import Link from "next/link";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 
 export default function RootLayout({
   children,
@@ -20,7 +20,7 @@ export default function RootLayout({
       <body>
         <ApolloWrapper>
           <UserProvider>
-            <ThemeRegistry>
+            <AppRouterCacheProvider>
               <body>
                 <AppBar position="fixed" component="nav">
                   <Toolbar sx={{ backgroundColor: "background.paper" }}>
@@ -83,7 +83,7 @@ export default function RootLayout({
                   {children}
                 </Box>
               </body>
-            </ThemeRegistry>
+            </AppRouterCacheProvider>
           </UserProvider>
         </ApolloWrapper>
       </body>

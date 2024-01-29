@@ -1,19 +1,18 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { Button, Paper } from "@mui/material";
 import Link from "next/link";
 import { SignInPrompt } from "@/components/auth/sign-in-promp";
 import { Spacing } from "@/components/spacing";
 
 export default function HomePage() {
   return (
-    <Box>
+    <div>
       <Box py={10} bgcolor={""}>
         <Typography fontSize={48}>Gift Exchange Website</Typography>
-        <Typography>
+        <span className="text-pink">
           This is a website to help you manage your gift exchange list.
-        </Typography>
+        </span>
       </Box>
       <SignInPrompt />
       <Link href="/list">
@@ -45,6 +44,6 @@ export default function HomePage() {
           </Typography>
         </Box>
       </Link>
-    </Box>
+    </div>
   );
 }

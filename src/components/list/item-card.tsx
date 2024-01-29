@@ -31,21 +31,19 @@ const ListCard = ({
         </Typography>
         <Typography>{url}</Typography>
       </Box>
-      <IconButton
-        title={purchased ? "Mark as Not Purchased" : "Mark as Purchased"}
-        className="border-gray-400 border rounded p-3 float-right"
-        onClick={purchase}
-      >
-        {purchased ? <RemoveShoppingCart /> : <Redeem />}
-      </IconButton>
-      {removeItem && (
+      <Box>
         <IconButton
-          className="border-gray-400 border rounded p-3 float-right"
-          onClick={() => removeItem(item)}
+          title={purchased ? "Mark as Not Purchased" : "Mark as Purchased"}
+          onClick={purchase}
         >
-          <DeleteIcon />
+          {purchased ? <RemoveShoppingCart /> : <Redeem />}
         </IconButton>
-      )}
+        {removeItem && (
+          <IconButton onClick={() => removeItem(item)}>
+            <DeleteIcon />
+          </IconButton>
+        )}
+      </Box>
     </Box>
   );
 };
