@@ -1,11 +1,17 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { List } from "@/components/list/list";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { getUserProfileData } from "@/services/user-service";
 
-export default function HomePage() {
+const HomePage = async () => {
+  const user = await getUserProfileData();
+
   return (
     <Box sx={{ display: "flex" }}>
-      <List />
+      <List user={user} />
     </Box>
   );
-}
+};
+
+export default withPageAuthRequired(HomePage, { returnTo: "/list" });

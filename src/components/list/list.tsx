@@ -10,8 +10,8 @@ import {
 import ListCard from "./item-card";
 import { useEffect, useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import { Spacing } from "../spacing";
+import { Claims } from "@auth0/nextjs-auth0";
 
 const GiftsQuery = gql`
   query ($userSlug: String, $groupSlug: String) {
@@ -73,21 +73,22 @@ type Gift = {
 export const List = ({
   groupSlug,
   userSlug,
+  user,
+  listUser,
 }: {
   groupSlug?: string;
   userSlug?: string;
+  user?: Claims;
+  listUser?: {
+    slug: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
 }) => {
-  const { user } = useUser();
-
   const { data, error, loading } = useQuery(GiftsQuery, {
     variables: {
       groupSlug,
-      userSlug,
-    },
-  });
-  const { data: userData } = useQuery(UserQuery, {
-    skip: !userSlug,
-    variables: {
       userSlug,
     },
   });
@@ -98,10 +99,10 @@ export const List = ({
 
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
+
   const [items, setItems] = useState<Gift[]>([]);
-  const canEdit =
-    (!groupSlug && !userSlug) || user?.email === userData?.user?.email;
-  const userTitle = `${userData?.user?.firstName} ${userData?.user?.lastName} (${userData?.user?.email})`;
+  const canEdit = (!groupSlug && !userSlug) || user?.email === listUser?.email;
+  const userTitle = `${listUser?.firstName} ${listUser?.lastName} (${listUser?.email})`;
 
   const addItem = async () => {
     setItems([...items, { title: name }]);
@@ -135,14 +136,6 @@ export const List = ({
       setItems(data.gifts);
     }
   }, [data]);
-
-  if (!user) {
-    return (
-      <Box sx={{ display: "flex" }}>
-        <Button href="/api/auth/login">Login to see list</Button>
-      </Box>
-    );
-  }
 
   return (
     <Box>
