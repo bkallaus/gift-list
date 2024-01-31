@@ -3,23 +3,8 @@ import { Box, Button, Dialog, TextField, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import { Dispatch, SetStateAction } from "react";
 import { Spacing } from "../spacing";
-import { gql, useMutation } from "@apollo/client";
+import { addGroupServer } from "@/services/add-group";
 
-type Group = {
-  id: string;
-  name: string;
-  limit: number;
-};
-
-const ADD_GROUP_MUTATION = gql`
-  mutation AddGroup($name: String!, $limit: Float!, $description: String) {
-    addGroup(name: $name, limit: $limit, description: $description) {
-      name
-      description
-      limit
-    }
-  }
-`;
 const AddGroup = ({
   open,
   setOpen,
@@ -27,7 +12,6 @@ const AddGroup = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [mutation] = useMutation(ADD_GROUP_MUTATION);
   const form = useFormik({
     initialValues: {
       name: "",
@@ -35,12 +19,10 @@ const AddGroup = ({
       limit: 0,
     },
     onSubmit: (values) => {
-      mutation({
-        variables: {
-          name: values.name,
-          limit: Number(values.limit),
-          description: values.description,
-        },
+      void addGroupServer({
+        name: values.name,
+        description: values.description,
+        limit: Number(values.limit),
       });
       setOpen(false);
     },

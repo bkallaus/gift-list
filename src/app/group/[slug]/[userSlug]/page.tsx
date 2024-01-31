@@ -25,13 +25,9 @@ const ListGroupPage = async ({
   };
 }) => {
   const user = await getUserProfileData();
-  const userData = await graphqlQuery(
-    UserQuery,
-    {
-      userSlug: params.userSlug,
-    },
-    { user }
-  );
+  const userData = await graphqlQuery(UserQuery, {
+    userSlug: params.userSlug,
+  });
 
   const listUser = userData?.data?.user as {
     slug: string;

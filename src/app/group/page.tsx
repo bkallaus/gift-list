@@ -3,8 +3,30 @@ import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import GroupList from "@/components/group/group-list";
 import { Spacing } from "@/components/spacing";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { graphqlQuery } from "@/gql/graphql";
 
-export default function HomePage() {
+const GroupsQuery = `
+  query {
+    groups {
+      name
+      slug
+      description
+      limit
+      members {
+        email
+        firstName
+        lastName
+      }
+    }
+  }
+`;
+
+const GroupPage = async () => {
+  const {
+    data: { groups },
+  } = await graphqlQuery(GroupsQuery);
+
   return (
     <Box>
       <Typography fontSize={48} fontWeight={500}>
@@ -14,7 +36,9 @@ export default function HomePage() {
         View and manage all gift giving groups you are a part of.
       </Typography>
       <Spacing />
-      <GroupList />
+      <GroupList groups={JSON.parse(JSON.stringify(groups))} />
     </Box>
   );
-}
+};
+
+export default withPageAuthRequired(GroupPage, { returnTo: "/group" });
