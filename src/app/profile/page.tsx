@@ -1,21 +1,19 @@
-"use client";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { getUserProfileData } from "@/services/user-service";
 
-export default function Profile() {
-  const { user } = useUser();
-
-  if (!user) {
-    return null;
-  }
+const Profile = async () => {
+  const user = await getUserProfileData();
 
   return (
     <Box>
-      <Typography>My Profie</Typography>
+      <Typography>My Profile</Typography>
       <Typography>{user.name}</Typography>
       <Typography>{user.email}</Typography>
     </Box>
   );
-}
+};
+
+export default withPageAuthRequired(Profile, { returnTo: "/profile" });

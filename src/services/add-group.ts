@@ -20,6 +20,15 @@ export const addGroupServer = async (values: {
 		limit: Number(values.limit),
 		description: values.description,
 	});
+
+	console.log(data);
+
+	if (data.errors) {
+		console.error(data.errors);
+
+		return { errors: data.errors };
+	}
+
 	const slug = data.data.addGroup.slug;
 
 	redirect(`/group/${slug}`);

@@ -23,6 +23,11 @@ const AddGroup = ({
         name: values.name,
         description: values.description,
         limit: Number(values.limit),
+      }).then(({ errors }) => {
+        if (errors) {
+          console.log(errors);
+          return;
+        }
       });
       setOpen(false);
     },
