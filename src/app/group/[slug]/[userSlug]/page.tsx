@@ -37,7 +37,7 @@ const ListGroupPage = async ({
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ margin: "auto" }}>
       <List
         userSlug={params.userSlug}
         groupSlug={params.slug}

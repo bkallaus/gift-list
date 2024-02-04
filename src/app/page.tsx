@@ -21,12 +21,22 @@ const HomePage = async () => {
         <SignInPrompt />
       ) : (
         <>
-          <Link href="/list">
+          <Link
+            href="/list"
+            style={{
+              textDecoration: "none",
+              color: "black",
+            }}
+          >
             <Box
               p={5}
               border={"1px solid gainsboro"}
               borderRadius={3}
-              sx={{ textDecoration: "none", color: "black" }}
+              sx={{
+                "&:hover": {
+                  backgroundColor: "gainsboro",
+                },
+              }}
             >
               <Typography fontSize={24} fontWeight={400}>
                 My List
@@ -35,12 +45,22 @@ const HomePage = async () => {
             </Box>
           </Link>
           <Spacing />
-          <Link href="/group">
+          <Link
+            href="/group"
+            style={{
+              textDecoration: "none",
+              color: "black",
+            }}
+          >
             <Box
               p={5}
               border={"1px solid gainsboro"}
               borderRadius={3}
-              sx={{ textDecoration: "none", color: "black" }}
+              sx={{
+                "&:hover": {
+                  backgroundColor: "gainsboro",
+                },
+              }}
             >
               <Typography fontSize={24} fontWeight={400}>
                 My Groups

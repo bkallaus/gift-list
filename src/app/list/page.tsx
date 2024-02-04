@@ -8,7 +8,7 @@ const HomePage = async () => {
   const user = await getUserProfileData();
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ margin: "auto" }}>
       <List user={user} />
     </Box>
   );

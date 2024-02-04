@@ -19,7 +19,16 @@ const GroupList = ({ groups }: { groups: Group[] }) => {
             color: "black",
           }}
         >
-          <Box border={"1px solid gainsboro"} borderRadius={3} p={3}>
+          <Box
+            border={"1px solid gainsboro"}
+            borderRadius={3}
+            p={3}
+            sx={{
+              "&:hover": {
+                backgroundColor: "gainsboro",
+              },
+            }}
+          >
             <Typography
               fontSize={24}
               fontWeight={600}

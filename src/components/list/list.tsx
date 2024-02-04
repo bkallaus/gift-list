@@ -143,7 +143,11 @@ export const List = ({
         {canEdit ? "My List" : <>{userTitle} Gift List</>}
       </Typography>
       {canEdit && (
-        <Paper>
+        <Paper
+          style={{
+            border: "1px solid gainsboro",
+          }}
+        >
           <Box display={"flex"} gap={1} padding={3}>
             <Box>
               <TextField

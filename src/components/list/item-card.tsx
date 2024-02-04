@@ -1,6 +1,6 @@
 import { Box, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Redeem, RemoveShoppingCart } from "@mui/icons-material";
+import { Redeem, RemoveShoppingCart, LinkRounded } from "@mui/icons-material";
 
 const ListCard = ({
   item,
@@ -15,6 +15,8 @@ const ListCard = ({
   url?: string;
   removeItem?: (id: string) => void;
 }) => {
+  const urlWithHttps = url?.includes("http") ? url : `https://${url}`;
+
   return (
     <Box
       sx={{
@@ -29,9 +31,13 @@ const ListCard = ({
         <Typography fontWeight={500} fontSize={18}>
           {item}
         </Typography>
-        <Typography>{url}</Typography>
       </Box>
       <Box>
+        {url && (
+          <IconButton target="_blank" href={urlWithHttps}>
+            <LinkRounded />
+          </IconButton>
+        )}
         <IconButton
           title={purchased ? "Mark as Not Purchased" : "Mark as Purchased"}
           onClick={purchase}

@@ -163,6 +163,11 @@ const MemberCard = ({
       p={3}
       alignItems={"center"}
       justifyContent={"space-between"}
+      sx={{
+        "&:hover": {
+          backgroundColor: "gainsboro",
+        },
+      }}
     >
       <Link
         href={`/group/${groupSlug}/${member.slug}`}
