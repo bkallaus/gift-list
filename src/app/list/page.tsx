@@ -14,4 +14,4 @@ const HomePage = async () => {
   );
 };
 
-export default withPageAuthRequired(HomePage, { returnTo: "/list" });
+export default HomePage;

@@ -3,8 +3,8 @@ import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import GroupList from "@/components/group/group-list";
 import { Spacing } from "@/components/spacing";
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { graphqlQuery } from "@/gql/graphql";
+import { getUserProfileData } from "@/services/user-service";
 
 const GroupsQuery = `
   query {
@@ -23,6 +23,8 @@ const GroupsQuery = `
 `;
 
 const GroupPage = async () => {
+  await getUserProfileData();
+
   const {
     data: { groups },
   } = await graphqlQuery(GroupsQuery);
@@ -41,4 +43,4 @@ const GroupPage = async () => {
   );
 };
 
-export default withPageAuthRequired(GroupPage, { returnTo: "/group" });
+export default GroupPage;

@@ -1,11 +1,13 @@
 "use server";
 import { Claims, getSession } from "@auth0/nextjs-auth0";
+import { redirect } from "next/navigation";
 
 export const getUserProfileData = async (): Promise<Claims> => {
 	const session = await getSession();
 
 	if (!session) {
-		throw new Error("Requires authentication");
+		console.log("test");
+		redirect("/");
 	}
 
 	const { user } = session;

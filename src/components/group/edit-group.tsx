@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useState } from "react";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import {
   Assign_Names,
   GroupQuery,
@@ -23,6 +22,7 @@ import ConfirmDialog from "../confirm-dialog";
 import EditGroupModalButton from "./edit-group-modal";
 import { useRouter } from "next/navigation";
 import AddMember from "../member/add-member";
+import { Claims } from "@auth0/nextjs-auth0";
 
 type Member = {
   slug: string;
@@ -31,15 +31,19 @@ type Member = {
   lastName: string;
 };
 
-const EditGroup = ({ groupSlug }: { groupSlug: string }) => {
+const EditGroup = ({
+  groupSlug,
+  user,
+}: {
+  groupSlug: string;
+  user: Claims;
+}) => {
   const [open, setOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const [removeMutation] = useMutation(Remove_Member);
   const [removeGroupMutation] = useMutation(Remove_Group);
   const [assignNames] = useMutation(Assign_Names);
-
-  const { user } = useUser();
 
   const navigation = useRouter();
   const { data, loading } = useQuery(GroupQuery, {
