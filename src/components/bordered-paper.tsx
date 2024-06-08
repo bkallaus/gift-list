@@ -10,6 +10,7 @@ export const BorderedPaper = ({
   return (
     <Paper
       sx={{
+        backgroundColor: "#fff",
         p: 2,
         border: "1px solid #ba895d40",
         borderRadius: 1,
