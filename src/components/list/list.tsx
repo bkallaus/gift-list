@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   LinearProgress,
-  Paper,
   TextField,
   Typography,
 } from "@mui/material";
@@ -12,6 +11,7 @@ import { useEffect, useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Spacing } from "../spacing";
 import { Claims } from "@auth0/nextjs-auth0";
+import { BorderedPaper } from "../bordered-paper";
 
 const GiftsQuery = gql`
   query ($userSlug: String, $groupSlug: String) {
@@ -143,11 +143,7 @@ export const List = ({
         {canEdit ? "My List" : <>{userTitle} Gift List</>}
       </Typography>
       {canEdit && (
-        <Paper
-          style={{
-            border: "1px solid gainsboro",
-          }}
-        >
+        <BorderedPaper>
           <Box display={"flex"} gap={1} padding={3}>
             <Box>
               <TextField
@@ -175,7 +171,7 @@ export const List = ({
               </Button>
             </Box>
           </Box>
-        </Paper>
+        </BorderedPaper>
       )}
       <Spacing />
       <Box display={"flex"} flexDirection={"column"} gap={1}>

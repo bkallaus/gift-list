@@ -29,7 +29,7 @@ export const addGroupServer = async (values: {
 		return { errors: data.errors };
 	}
 
-	const slug = data.data.addGroup.slug;
+	const slug = (data.data as { addGroup: { slug: string } }).addGroup.slug;
 
 	redirect(`/group/${slug}`);
 };

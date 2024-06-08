@@ -23,6 +23,8 @@ import EditGroupModalButton from "./edit-group-modal";
 import { useRouter } from "next/navigation";
 import AddMember from "../member/add-member";
 import { Claims } from "@auth0/nextjs-auth0";
+import { join } from "path";
+import { BorderedPaper } from "../bordered-paper";
 
 type Member = {
   slug: string;
@@ -159,15 +161,12 @@ const MemberCard = ({
   const [showConfirm, setShowConfirm] = useState(false);
 
   return (
-    <Box
+    <BorderedPaper
       key={member.email}
-      display={"flex"}
-      border={"1px solid gainsboro"}
-      borderRadius={3}
-      p={3}
-      alignItems={"center"}
-      justifyContent={"space-between"}
       sx={{
+        alignItems: "center",
+        display: "flex",
+        justifyContent: "space-between",
         "&:hover": {
           backgroundColor: "gainsboro",
         },
@@ -205,7 +204,7 @@ const MemberCard = ({
         open={showConfirm}
         confirmAction={() => onRemoveMember(member.email)}
       />
-    </Box>
+    </BorderedPaper>
   );
 };
 

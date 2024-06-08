@@ -4,6 +4,7 @@ import { Group } from "./group-queries";
 import AddGroup from "./add-group";
 import Link from "next/link";
 import { useState } from "react";
+import { BorderedPaper } from "../bordered-paper";
 
 const GroupList = ({ groups }: { groups: Group[] }) => {
   const [open, setOpen] = useState(false);
@@ -19,10 +20,7 @@ const GroupList = ({ groups }: { groups: Group[] }) => {
             color: "black",
           }}
         >
-          <Box
-            border={"1px solid gainsboro"}
-            borderRadius={3}
-            p={3}
+          <BorderedPaper
             sx={{
               "&:hover": {
                 backgroundColor: "gainsboro",
@@ -54,7 +52,7 @@ const GroupList = ({ groups }: { groups: Group[] }) => {
             >
               {group.description}
             </Typography>
-          </Box>
+          </BorderedPaper>
         </Link>
       ))}
       <Box>

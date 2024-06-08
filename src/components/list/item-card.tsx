@@ -1,6 +1,7 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Paper, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Redeem, RemoveShoppingCart, LinkRounded } from "@mui/icons-material";
+import { BorderedPaper } from "../bordered-paper";
 
 const ListCard = ({
   item,
@@ -18,13 +19,10 @@ const ListCard = ({
   const urlWithHttps = url?.includes("http") ? url : `https://${url}`;
 
   return (
-    <Box
+    <BorderedPaper
       sx={{
         display: "flex",
         justifyContent: "space-between",
-        border: "1px solid gainsboro",
-        borderRadius: "5px",
-        padding: 1,
       }}
     >
       <Box>
@@ -50,7 +48,7 @@ const ListCard = ({
           </IconButton>
         )}
       </Box>
-    </Box>
+    </BorderedPaper>
   );
 };
 

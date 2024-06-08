@@ -21,10 +21,15 @@ export const AuthButtons = async () => {
 
   return (
     <Box display={"flex"} alignItems={"center"} gap={1}>
-      <Button href="/profile" startIcon={<Person />}>
+      <Button
+        color="secondary"
+        variant="outlined"
+        href="/profile"
+        startIcon={<Person />}
+      >
         {user.name}
       </Button>
-      <Button variant="outlined" href="/api/auth/logout">
+      <Button color="secondary" variant="text" href="/api/auth/logout">
         Log Out
       </Button>
     </Box>

@@ -27,7 +27,7 @@ const GroupPage = async () => {
 
   const {
     data: { groups },
-  } = await graphqlQuery(GroupsQuery);
+  } = (await graphqlQuery(GroupsQuery)) as { data: { groups: any } };
 
   return (
     <Box>

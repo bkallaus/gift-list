@@ -5,6 +5,7 @@ import Link from "next/link";
 import { SignInPrompt } from "@/components/auth/sign-in-promp";
 import { Spacing } from "@/components/spacing";
 import { getSession } from "@auth0/nextjs-auth0";
+import { BorderedPaper } from "@/components/bordered-paper";
 
 const HomePage = async () => {
   const session = await getSession();
@@ -28,10 +29,7 @@ const HomePage = async () => {
               color: "black",
             }}
           >
-            <Box
-              p={5}
-              border={"1px solid gainsboro"}
-              borderRadius={3}
+            <BorderedPaper
               sx={{
                 "&:hover": {
                   backgroundColor: "gainsboro",
@@ -42,7 +40,7 @@ const HomePage = async () => {
                 My List
               </Typography>
               <Typography>Manage your list</Typography>
-            </Box>
+            </BorderedPaper>
           </Link>
           <Spacing />
           <Link
@@ -52,10 +50,7 @@ const HomePage = async () => {
               color: "black",
             }}
           >
-            <Box
-              p={5}
-              border={"1px solid gainsboro"}
-              borderRadius={3}
+            <BorderedPaper
               sx={{
                 "&:hover": {
                   backgroundColor: "gainsboro",
@@ -68,7 +63,7 @@ const HomePage = async () => {
               <Typography>
                 View groups your in as well as gifts of those in your groups
               </Typography>
-            </Box>
+            </BorderedPaper>
           </Link>
         </>
       )}
