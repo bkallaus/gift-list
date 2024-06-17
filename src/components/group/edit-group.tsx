@@ -42,6 +42,7 @@ const EditGroup = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showAssign, setShowAssign] = useState(false);
 
   const [removeMutation] = useMutation(Remove_Member);
   const [removeGroupMutation] = useMutation(Remove_Group);
@@ -74,6 +75,7 @@ const EditGroup = ({
   };
 
   const onAssignNames = () => {
+    setShowAssign(true);
     assignNames({
       variables: {
         groupSlug,
@@ -110,11 +112,11 @@ const EditGroup = ({
           </Button>
           <Spacing />
           <Button variant="outlined" onClick={() => setShowConfirm(true)}>
-            Delete Group{" "}
+            Delete Group
           </Button>
           <Spacing />
           <Button variant="outlined" onClick={onAssignNames}>
-            Assign Names{" "}
+            Assign Names
           </Button>
         </Box>
       )}
@@ -139,6 +141,22 @@ const EditGroup = ({
         setOpen={setShowConfirm}
         open={showConfirm}
         confirmAction={() => onRemoveGroup()}
+      />
+
+      <ConfirmDialog
+        title={"Assign Names"}
+        description={
+          "Are you sure you want to assign names? This will overide existing assignees."
+        }
+        setOpen={setShowAssign}
+        open={showAssign}
+        confirmAction={() => {
+          assignNames({
+            variables: {
+              groupSlug,
+            },
+          });
+        }}
       />
       <AddMember setOpen={setOpen} open={open} groupSlug={groupSlug} />
     </Box>
