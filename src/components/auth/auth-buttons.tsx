@@ -12,7 +12,6 @@ export const AuthButtons = async () => {
         <Button variant="contained" href="/api/auth/login">
           Log In
         </Button>
-        gr
       </Box>
     );
   }

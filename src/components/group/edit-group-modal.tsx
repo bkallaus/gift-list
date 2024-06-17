@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Paper,
   TextField,
 } from "@mui/material";
 import { Group } from "./group-queries";
@@ -77,43 +78,45 @@ const EditGroupModalButton = ({ group }: EditGroupModalProps) => {
         Edit Group
       </Button>
       <Dialog open={open} onClose={onCancel}>
-        <form onSubmit={formik.handleSubmit}>
-          <DialogTitle>Edit {group.name}</DialogTitle>
-          <DialogContent>
-            <Box>
-              <Spacing />
-              <TextField
-                label="Name"
-                name="name"
-                value={formik.values.name}
-                onChange={formik.handleChange}
-              />
-              <Spacing />
-              <TextField
-                label="Descriptions"
-                name="description"
-                value={formik.values.description}
-                onChange={formik.handleChange}
-              />
-              <Spacing />
-              <TextField
-                label="Limit"
-                name="limit"
-                value={formik.values.limit}
-                onChange={formik.handleChange}
-              />
-            </Box>
-            <DialogContentText>{group.description}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button autoFocus onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button type="submit" onClick={handleOk}>
-              Ok
-            </Button>
-          </DialogActions>
-        </form>
+        <Paper sx={{ backgroundColor: "white" }}>
+          <form onSubmit={formik.handleSubmit}>
+            <DialogTitle>Edit {group.name}</DialogTitle>
+            <DialogContent>
+              <Box>
+                <Spacing />
+                <TextField
+                  label="Name"
+                  name="name"
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                />
+                <Spacing />
+                <TextField
+                  label="Descriptions"
+                  name="description"
+                  value={formik.values.description}
+                  onChange={formik.handleChange}
+                />
+                <Spacing />
+                <TextField
+                  label="Limit"
+                  name="limit"
+                  value={formik.values.limit}
+                  onChange={formik.handleChange}
+                />
+              </Box>
+              <DialogContentText>{group.description}</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button autoFocus onClick={onCancel}>
+                Cancel
+              </Button>
+              <Button type="submit" onClick={handleOk}>
+                Ok
+              </Button>
+            </DialogActions>
+          </form>
+        </Paper>
       </Dialog>
     </div>
   );

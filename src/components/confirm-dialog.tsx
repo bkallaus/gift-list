@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Paper,
 } from "@mui/material";
 
 type ConfirmDialogProps = {
@@ -29,16 +30,18 @@ const ConfirmDialog = (props: ConfirmDialogProps) => {
 
   return (
     <Dialog open={open} onClose={onCancel}>
-      <DialogTitle>{title}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>{description}</DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button autoFocus onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button onClick={handleOk}>Ok</Button>
-      </DialogActions>
+      <Paper sx={{ backgroundColor: "white" }}>
+        <DialogTitle>{title}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{description}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button onClick={handleOk}>Ok</Button>
+        </DialogActions>
+      </Paper>
     </Dialog>
   );
 };
