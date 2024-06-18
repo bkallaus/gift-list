@@ -71,7 +71,7 @@ const HomePage = async () => {
                 My Groups
               </Typography>
               <Typography>
-                View groups your in as well as gifts of those in your groups
+                View groups you're in as well as gifts of those in your groups
               </Typography>
             </BorderedPaper>
           </Link>
