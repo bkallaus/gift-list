@@ -128,6 +128,7 @@ const EditGroup = ({
             key={member.email}
             member={member}
             onRemoveMember={onRemoveMember}
+            isAdmin={isAdmin}
             isDrawnName={recipient?.email === member.email}
             userEmail={user?.email || ""}
             groupSlug={groupSlug}
@@ -146,7 +147,7 @@ const EditGroup = ({
       <ConfirmDialog
         title={"Assign Names"}
         description={
-          "Are you sure you want to assign names? This will overide existing assignees."
+          "Are you sure you want to assign names? This will override existing assignees."
         }
         setOpen={setShowAssign}
         open={showAssign}
@@ -166,17 +167,20 @@ const EditGroup = ({
 const MemberCard = ({
   member,
   onRemoveMember,
+  isAdmin,
   isDrawnName,
   userEmail,
   groupSlug,
 }: {
   member: Member;
   onRemoveMember: (email: string) => void;
+  isAdmin: boolean;
   isDrawnName: boolean;
   userEmail: string;
   groupSlug: string;
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
+  const isSelf = userEmail === member.email;
 
   return (
     <BorderedPaper
@@ -207,7 +211,7 @@ const MemberCard = ({
           <Typography>{member.email}</Typography>
         </Box>
       </Link>
-      {userEmail !== member.email && (
+      {!isSelf && isAdmin && (
         <IconButton
           className="border-gray-400 border rounded p-3 float-right"
           onClick={() => setShowConfirm(true)}

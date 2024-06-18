@@ -79,6 +79,7 @@ const AddMember = ({
               </Box>
             </Box>
             <Spacing />
+            <Button onClick={() => setOpen(false)}>Cancel</Button>
             <Button variant="contained" type="submit">
               Add Member
             </Button>
