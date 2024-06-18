@@ -7,6 +7,16 @@ import { Spacing } from "@/components/spacing";
 import { getSession } from "@auth0/nextjs-auth0";
 import { BorderedPaper } from "@/components/bordered-paper";
 
+export const metadata = {
+  title: "Gift Exchange Website",
+  description: "This is a website to help you manage your gift exchange list.",
+  openGraph: {
+    title: "Gift Exchange Website",
+    description:
+      "This is a website to help you manage your gift exchange list.",
+  },
+};
+
 const HomePage = async () => {
   const session = await getSession();
 
