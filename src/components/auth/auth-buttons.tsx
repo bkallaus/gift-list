@@ -19,16 +19,22 @@ export const AuthButtons = async () => {
   const user = session.user;
 
   return (
-    <Box display={"flex"} alignItems={"center"} gap={1}>
+    <Box
+      display={"flex"}
+      alignItems={"center"}
+      gap={1}
+      flex={1}
+      justifyContent={"flex-end"}
+    >
       <Button
-        color="secondary"
         variant="outlined"
         href="/profile"
-        startIcon={<Person />}
+        sx={{ color: "white" }}
+        startIcon={<Person sx={{ color: "white" }} />}
       >
         {user.name}
       </Button>
-      <Button color="secondary" variant="text" href="/api/auth/logout">
+      <Button sx={{ color: "white" }} variant="text" href="/api/auth/logout">
         Log Out
       </Button>
     </Box>

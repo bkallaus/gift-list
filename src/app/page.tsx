@@ -22,11 +22,16 @@ const HomePage = async () => {
 
   return (
     <div>
-      <Box py={10} bgcolor={""}>
+      <Box
+        py={10}
+        sx={{
+          textAlign: "center",
+        }}
+      >
         <Typography fontSize={48}>Gift Exchange Website</Typography>
-        <span className="text-pink">
-          This is a website to help you manage your gift exchange list.
-        </span>
+        <Typography>
+          This is a website to help you manage your gift exchanges.
+        </Typography>
       </Box>
       {!session ? (
         <SignInPrompt />
