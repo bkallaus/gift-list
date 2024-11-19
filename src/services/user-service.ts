@@ -13,7 +13,7 @@ const checkIfUserExistsOrInsert = async (user: Claims) => {
 	if (!result.length) {
 		const slug = v4();
 		const insertQuery =
-			"insert into users (email, slug, first_name, last_name) values ($1, $2, $3);";
+			"insert into users (email, slug, first_name, last_name) values ($1, $2, $3, $4);";
 		const insertVariables = [
 			user.email,
 			slug,
