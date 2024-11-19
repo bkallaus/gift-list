@@ -1,4 +1,4 @@
-import { Box, IconButton, Paper, Typography } from "@mui/material";
+import { Box, Button, IconButton, Paper, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Redeem, RemoveShoppingCart, LinkRounded } from "@mui/icons-material";
 import { BorderedPaper } from "../bordered-paper";
@@ -34,18 +34,24 @@ const ListCard = ({
           {item}
         </Typography>
       </Box>
+      <Button onClick={purchase}>
+        {purchased ? (
+          <Box display={"flex"} gap={1}>
+            Mark as Not Purchased <RemoveShoppingCart />
+          </Box>
+        ) : (
+          <Box display={"flex"} gap={1}>
+            Mark as Purchased
+            <Redeem />
+          </Box>
+        )}
+      </Button>
       <Box>
         {url && (
           <IconButton target="_blank" href={urlWithHttps}>
             <LinkRounded />
           </IconButton>
         )}
-        <IconButton
-          title={purchased ? "Mark as Not Purchased" : "Mark as Purchased"}
-          onClick={purchase}
-        >
-          {purchased ? <RemoveShoppingCart /> : <Redeem />}
-        </IconButton>
         {removeItem && (
           <IconButton onClick={() => setShowConfirm(true)}>
             <DeleteIcon />

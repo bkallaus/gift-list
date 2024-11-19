@@ -144,8 +144,8 @@ export const List = ({
       </Typography>
       {canEdit && (
         <BorderedPaper>
-          <Box display={"flex"} gap={1} padding={3}>
-            <Box>
+          <Box display={"flex"} gap={1} padding={3} justifyItems={"center"}>
+            <Box margin={"auto"}>
               <TextField
                 size="small"
                 label={"Gift Name"}
@@ -159,11 +159,11 @@ export const List = ({
                 onChange={(e) => setUrl(e.target.value)}
                 value={url}
               />
-            </Box>
-            <Box>
+              <Spacing />
               <Button
                 variant="contained"
                 type="submit"
+                fullWidth
                 disabled={!name}
                 onClick={addItem}
               >
