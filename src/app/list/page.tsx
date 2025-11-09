@@ -7,7 +7,7 @@ const HomePage = async () => {
   const user = await getUserProfileData();
 
   return (
-    <Box sx={{ margin: "auto" }}>
+    <Box>
       <List user={user} />
     </Box>
   );

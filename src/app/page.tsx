@@ -8,12 +8,12 @@ import { BorderedPaper } from "@/components/bordered-paper";
 import { hasAccess } from "@/services/verify-credentials";
 
 export const metadata = {
-  title: "Gift Exchange Website",
-  description: "This is a website to help you manage your gift exchange list.",
+  title: "Gift Exchange - Organize Your Holiday Gift Lists",
+  description: "The easiest way to organize and manage your gift exchanges with family and friends. Create wish lists, join groups, and make gift-giving simple and fun.",
   openGraph: {
-    title: "Gift Exchange Website",
+    title: "Gift Exchange - Organize Your Holiday Gift Lists",
     description:
-      "This is a website to help you manage your gift exchange list.",
+      "The easiest way to organize and manage your gift exchanges with family and friends.",
   },
 };
 
@@ -28,9 +28,14 @@ const HomePage = async () => {
           textAlign: "center",
         }}
       >
-        <Typography fontSize={48}>Gift Exchange Website</Typography>
-        <Typography>
-          This is a website to help you manage your gift exchanges.
+        <Typography fontSize={48} fontWeight={600} sx={{ mb: 2 }}>
+          Welcome to Gift Exchange
+        </Typography>
+        <Typography fontSize={20} color="text.secondary" sx={{ maxWidth: 600, mx: "auto", mb: 1 }}>
+          The easiest way to organize and manage your gift exchanges with family and friends.
+        </Typography>
+        <Typography fontSize={16} color="text.secondary" sx={{ maxWidth: 600, mx: "auto" }}>
+          Create wish lists, join groups, and make gift-giving simple and fun this holiday season.
         </Typography>
       </Box>
       {!session ? (
@@ -54,7 +59,7 @@ const HomePage = async () => {
               <Typography fontSize={24} fontWeight={400}>
                 My List
               </Typography>
-              <Typography>Manage your list</Typography>
+              <Typography>Create and manage your wish list</Typography>
             </BorderedPaper>
           </Link>
           <Spacing />

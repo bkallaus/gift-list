@@ -26,38 +26,66 @@ const ListCard = ({
     <BorderedPaper
       sx={{
         display: "flex",
-        justifyContent: "space-between",
+        alignItems: "center",
+        gap: 2,
+        p: 2.5,
+        "&:hover": {
+          boxShadow: 2,
+        },
+        ...(purchased && {
+          opacity: 0.7,
+          backgroundColor: "#f5f5f5",
+        }),
       }}
     >
-      <Box>
-        <Typography fontWeight={500} fontSize={18}>
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Typography 
+          fontWeight={500} 
+          fontSize={18}
+          sx={{
+            textDecoration: purchased ? "line-through" : "none",
+            color: purchased ? "text.secondary" : "text.primary",
+          }}
+        >
           {item}
         </Typography>
       </Box>
-      <Button onClick={purchase}>
-        {purchased ? (
-          <Box display={"flex"} gap={1}>
-            Mark as Not Purchased <RemoveShoppingCart />
-          </Box>
-        ) : (
-          <Box display={"flex"} gap={1}>
-            Mark as Purchased
-            <Redeem />
-          </Box>
-        )}
-      </Button>
-      <Box>
+      
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         {url && (
-          <IconButton target="_blank" href={urlWithHttps}>
+          <IconButton 
+            target="_blank" 
+            href={urlWithHttps}
+            size="small"
+            sx={{ color: "primary.main" }}
+            title="Open link"
+          >
             <LinkRounded />
           </IconButton>
         )}
+        
+        <Button 
+          onClick={purchase}
+          variant={purchased ? "outlined" : "contained"}
+          size="small"
+          startIcon={purchased ? <RemoveShoppingCart /> : <Redeem />}
+          sx={{ whiteSpace: "nowrap" }}
+        >
+          {purchased ? "Unmark" : "Mark Purchased"}
+        </Button>
+        
         {removeItem && (
-          <IconButton onClick={() => setShowConfirm(true)}>
+          <IconButton 
+            onClick={() => setShowConfirm(true)}
+            size="small"
+            sx={{ color: "error.main" }}
+            title="Remove item"
+          >
             <DeleteIcon />
           </IconButton>
         )}
       </Box>
+      
       <ConfirmDialog
         title={"Remove Item"}
         description={"Are you sure you want to remove this item from the list?"}

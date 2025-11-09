@@ -12,8 +12,12 @@ export const SignInPrompt = () => {
         textAlign: "center",
       }}
     >
-      <Typography variant="h2">Welcome!</Typography>
-      <Typography>Get started by logging in to manage your list. </Typography>
+      <Typography variant="body1" sx={{ mb: 1 }}>
+        Join your friends and family in making gift-giving easier and more organized.
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        Sign in to create your wish list, join gift exchange groups, and start sharing the joy of giving.
+      </Typography>
       <Spacing />
       <GoogleSignIn />
     </Paper>

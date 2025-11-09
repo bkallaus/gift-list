@@ -6,13 +6,10 @@ import { SignOutButton } from "./sign-out-button";
 export const AuthButtons =  async () => {
 
   const user = await getUser();
-  console.log(user);
 
   if (!user) {
     return (
-      <Box>
-          <GoogleSignIn />
-      </Box>
+      null
     );
   }
 

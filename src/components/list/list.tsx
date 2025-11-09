@@ -9,7 +9,6 @@ import {
 import ListCard from "./item-card";
 import { useEffect, useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Spacing } from "../spacing";
 import { BorderedPaper } from "../bordered-paper";
 import { User } from "@/types/user";
 
@@ -20,17 +19,6 @@ const GiftsQuery = gql`
       title
       url
       purchased
-    }
-  }
-`;
-
-const UserQuery = gql`
-  query User($userSlug: String!) {
-    user(slug: $userSlug) {
-      slug
-      email
-      firstName
-      lastName
     }
   }
 `;
@@ -139,70 +127,106 @@ export const List = ({
   }, [data]);
 
   return (
-    <Box>
-      <Typography textAlign={"center"} fontWeight={600} fontSize={24}>
-        {canEdit ? "My List" : <>{userTitle} Gift List</>}
-      </Typography>
+    <Box sx={{ maxWidth: 800, mx: "auto", px: 2 }}>
+      <Box sx={{ mb: 4, textAlign: "center" }}>
+        <Typography 
+          variant="h4" 
+          fontWeight={600} 
+          sx={{ mb: 1 }}
+          color="primary"
+        >
+          {canEdit ? "My Wish List" : `${listUser?.firstName || ""} ${listUser?.lastName || ""}'s Wish List`}
+        </Typography>
+        {!canEdit && listUser && (
+          <Typography variant="body2" color="text.secondary">
+            {listUser.email}
+          </Typography>
+        )}
+      </Box>
+
       {canEdit && (
-        <BorderedPaper>
-          <Box display={"flex"} gap={1} padding={3} justifyItems={"center"}>
-            <Box margin={"auto"}>
-              <TextField
-                size="small"
-                label={"Gift Name"}
-                onChange={(e) => setName(e.target.value)}
-                value={name}
-              />
-              <Spacing />
-              <TextField
-                size="small"
-                label={"Url"}
-                onChange={(e) => setUrl(e.target.value)}
-                value={url}
-              />
-              <Spacing />
-              <Button
-                variant="contained"
-                type="submit"
-                fullWidth
-                disabled={!name}
-                onClick={addItem}
-              >
-                Add
-              </Button>
-            </Box>
+        <BorderedPaper sx={{ mb: 3 }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 500 }}>
+            Add New Gift
+          </Typography>
+          <Box display={"flex"} flexDirection={"column"} gap={2}>
+            <TextField
+              fullWidth
+              label="Gift Name"
+              placeholder="e.g., Wireless Headphones"
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              variant="outlined"
+            />
+            <TextField
+              fullWidth
+              label="Link (Optional)"
+              placeholder="https://example.com/product"
+              onChange={(e) => setUrl(e.target.value)}
+              value={url}
+              variant="outlined"
+              helperText="Add a link to help others find this gift"
+            />
+            <Button
+              variant="contained"
+              size="large"
+              fullWidth
+              disabled={!name}
+              onClick={addItem}
+              sx={{ mt: 1 }}
+            >
+              Add to List
+            </Button>
           </Box>
         </BorderedPaper>
       )}
-      <Spacing />
-      <Box display={"flex"} flexDirection={"column"} gap={1}>
-        {loading && <LinearProgress />}
-        {items.length < 1 && (
-          <Typography textAlign={"center"}>
-            {canEdit
-              ? "No gifts added"
-              : `${userTitle} has not added any gifts`}
+
+      {loading && <LinearProgress sx={{ mb: 2 }} />}
+
+      {!loading && items.length === 0 && (
+        <BorderedPaper>
+          <Box sx={{ textAlign: "center", py: 6 }}>
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
+              {canEdit
+                ? "Your wish list is empty"
+                : `${listUser?.firstName || "This user"} hasn't added any gifts yet`}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {canEdit
+                ? "Start adding gifts to your list above"
+                : "Check back later to see their wish list"}
+            </Typography>
+          </Box>
+        </BorderedPaper>
+      )}
+
+      {items.length > 0 && (
+        <Box>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 500 }}>
+            {items.length} {items.length === 1 ? "Item" : "Items"}
           </Typography>
-        )}
-        {items.map((item) => (
-          <ListCard
-            key={item.id}
-            item={item.title}
-            purchased={item.purchased}
-            purchase={() => {
-              purchaseGift({
-                variables: {
-                  giftId: item.id,
-                  purchased: !item.purchased,
-                },
-                refetchQueries: [GiftsQuery],
-              });
-            }}
-            url={item.url}
-            removeItem={canEdit ? removeItem : undefined}
-          />
-        ))}
-      </Box>
+          <Box display={"flex"} flexDirection={"column"} gap={2}>
+            {items.map((item) => (
+              <ListCard
+                key={item.id}
+                item={item.title}
+                purchased={item.purchased}
+                purchase={() => {
+                  purchaseGift({
+                    variables: {
+                      giftId: item.id,
+                      purchased: !item.purchased,
+                    },
+                    refetchQueries: [GiftsQuery],
+                  });
+                }}
+                url={item.url}
+                removeItem={canEdit ? removeItem : undefined}
+              />
+            ))}
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };
