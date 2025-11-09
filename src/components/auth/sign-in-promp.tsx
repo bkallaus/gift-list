@@ -1,9 +1,10 @@
-import { Spa } from "@mui/icons-material";
-import { Alert, Button, Paper, Typography } from "@mui/material";
-import React from "react";
+'use client';
+import { Paper, Typography } from "@mui/material";
 import { Spacing } from "../spacing";
+import GoogleSignIn from "./google-sign-in-button";
 
 export const SignInPrompt = () => {
+
   return (
     <Paper
       sx={{
@@ -14,9 +15,7 @@ export const SignInPrompt = () => {
       <Typography variant="h2">Welcome!</Typography>
       <Typography>Get started by logging in to manage your list. </Typography>
       <Spacing />
-      <Button variant="contained" href="/api/auth/login">
-        Log In
-      </Button>
+      <GoogleSignIn />
     </Paper>
   );
 };

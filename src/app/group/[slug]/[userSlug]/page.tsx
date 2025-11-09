@@ -15,14 +15,15 @@ const UserQuery = `
   }
 `;
 
-const ListGroupPage = async ({
-  params,
-}: {
-  params: {
-    slug: string;
-    userSlug: string;
-  };
-}) => {
+const ListGroupPage = async (
+  props: {
+    params: Promise<{
+      slug: string;
+      userSlug: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   const user = await getUserProfileData();
   const userData = await graphqlQuery(UserQuery, {
     userSlug: params.userSlug,

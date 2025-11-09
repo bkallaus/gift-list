@@ -1,17 +1,23 @@
 import React from "react";
-import { UserProvider } from "@auth0/nextjs-auth0/client";
-import { AppBar, Box, ThemeProvider, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  ThemeProvider,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import { AuthButtons } from "@/components/auth/auth-buttons";
 import { ApolloWrapper } from "@/components/apollo-wrapper";
 import Link from "next/link";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import theme from "@/theme";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  
   return (
     <html lang="en">
       <head>
@@ -24,7 +30,6 @@ export default function RootLayout({
         }}
       >
         <ApolloWrapper>
-          <UserProvider>
             <AppRouterCacheProvider>
               <ThemeProvider theme={theme}>
                 <body>
@@ -86,7 +91,6 @@ export default function RootLayout({
                 </body>
               </ThemeProvider>
             </AppRouterCacheProvider>
-          </UserProvider>
         </ApolloWrapper>
       </body>
     </html>

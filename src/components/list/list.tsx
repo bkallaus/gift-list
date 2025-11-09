@@ -10,8 +10,8 @@ import ListCard from "./item-card";
 import { useEffect, useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Spacing } from "../spacing";
-import { Claims } from "@auth0/nextjs-auth0";
 import { BorderedPaper } from "../bordered-paper";
+import { User } from "@/types/user";
 
 const GiftsQuery = gql`
   query ($userSlug: String, $groupSlug: String) {
@@ -78,7 +78,7 @@ export const List = ({
 }: {
   groupSlug?: string;
   userSlug?: string;
-  user?: Claims;
+  user?: User;
   listUser?: {
     slug: string;
     email: string;
@@ -92,6 +92,7 @@ export const List = ({
       userSlug,
     },
   });
+  console.log(data);
 
   const [mutate] = useMutation(GiftsMutation);
   const [removeGift] = useMutation(GiftsRemoveMutation);

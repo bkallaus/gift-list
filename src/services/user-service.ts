@@ -1,10 +1,11 @@
 "use server";
-import { Claims, getSession } from "@auth0/nextjs-auth0";
 import { redirect } from "next/navigation";
 import { executeQuery } from "./database";
 import { v4 } from "uuid";
+import { getUser } from "./verify-credentials";
+import { User } from "@/types/user";
 
-const checkIfUserExistsOrInsert = async (user: Claims) => {
+const checkIfUserExistsOrInsert = async (user: User) => {
 	const query = "select * from users where email = $1;";
 	const variables = [user.email];
 
@@ -17,24 +18,21 @@ const checkIfUserExistsOrInsert = async (user: Claims) => {
 		const insertVariables = [
 			user.email,
 			slug,
-			user.given_name,
-			user.family_name,
+			user.name,
 		];
 
 		await executeQuery(insertQuery, insertVariables);
 	}
 };
 
-export const getUserProfileData = async (): Promise<Claims> => {
-	const session = await getSession();
+export const getUserProfileData = async (): Promise<User> => {
+	const user = await getUser();
 
-	if (!session) {
-		redirect("/");
+	if(!user){
+		redirect('/');
 	}
 
-	await checkIfUserExistsOrInsert(session.user);
-
-	const { user } = session;
+	await checkIfUserExistsOrInsert(user);
 
 	return user;
 };

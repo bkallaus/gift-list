@@ -1,22 +1,20 @@
-import { getSession } from "@auth0/nextjs-auth0";
 import { Person } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
-import React from "react";
+import GoogleSignIn from "./google-sign-in-button";
+import { getUser } from "@/services/verify-credentials";
+import { SignOutButton } from "./sign-out-button";
+export const AuthButtons =  async () => {
 
-export const AuthButtons = async () => {
-  const session = await getSession();
+  const user = await getUser();
+  console.log(user);
 
-  if (!session) {
+  if (!user) {
     return (
       <Box>
-        <Button variant="contained" href="/api/auth/login">
-          Log In
-        </Button>
+          <GoogleSignIn />
       </Box>
     );
   }
-
-  const user = session.user;
 
   return (
     <Box
@@ -34,9 +32,7 @@ export const AuthButtons = async () => {
       >
         {user.name}
       </Button>
-      <Button sx={{ color: "white" }} variant="text" href="/api/auth/logout">
-        Log Out
-      </Button>
+      <SignOutButton />
     </Box>
   );
 };

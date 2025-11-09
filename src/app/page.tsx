@@ -4,8 +4,8 @@ import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import { SignInPrompt } from "@/components/auth/sign-in-promp";
 import { Spacing } from "@/components/spacing";
-import { getSession } from "@auth0/nextjs-auth0";
 import { BorderedPaper } from "@/components/bordered-paper";
+import { hasAccess } from "@/services/verify-credentials";
 
 export const metadata = {
   title: "Gift Exchange Website",
@@ -18,7 +18,7 @@ export const metadata = {
 };
 
 const HomePage = async () => {
-  const session = await getSession();
+  const session = await hasAccess();
 
   return (
     <div>

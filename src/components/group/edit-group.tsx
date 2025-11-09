@@ -22,9 +22,8 @@ import ConfirmDialog from "../confirm-dialog";
 import EditGroupModalButton from "./edit-group-modal";
 import { useRouter } from "next/navigation";
 import AddMember from "../member/add-member";
-import { Claims } from "@auth0/nextjs-auth0";
-import { join } from "path";
 import { BorderedPaper } from "../bordered-paper";
+import { User } from "@/types/user";
 
 type Member = {
   slug: string;
@@ -37,8 +36,8 @@ const EditGroup = ({
   groupSlug,
   user,
 }: {
+  user: User;
   groupSlug: string;
-  user: Claims;
 }) => {
   const [open, setOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);

@@ -3,11 +3,12 @@ import Box from "@mui/material/Box";
 import EditGroup from "@/components/group/edit-group";
 import { getUserProfileData } from "@/services/user-service";
 
-export default async function HomePage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default async function HomePage(
+  props: {
+    params: Promise<{ slug: string }>;
+  }
+) {
+  const params = await props.params;
   const user = await getUserProfileData();
 
   return (
