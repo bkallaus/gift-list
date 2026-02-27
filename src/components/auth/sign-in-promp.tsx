@@ -1,4 +1,6 @@
-'use client';
+
+"use client"
+
 import { Paper, Typography } from "@mui/material";
 import { Spacing } from "../spacing";
 import GoogleSignIn from "./google-sign-in-button";

@@ -1,6 +1,5 @@
 import { Person } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
-import GoogleSignIn from "./google-sign-in-button";
 import { getUser } from "@/services/verify-credentials";
 import { SignOutButton } from "./sign-out-button";
 export const AuthButtons =  async () => {
